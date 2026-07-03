@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 251872068f45f43469c5f2a579ce1d22, type: 3}
+  m_Name: GameStartSetting
+  m_EditorClassIdentifier: Assembly-CSharp::GameStartSetting
+  moneyStart: 100
+  crateConfigs:
+  - price: 30
+    NameCrate: comic
+    DescriptionCrate: 
+    bookProbabilities:
+    - bookId: drama
+      percentage: 10
+    - bookId: crime
+      percentage: 10
+    - bookId: kid
+      percentage: 40
+    - bookId: fantasy
+      percentage: 40
+  - price: 30
+    NameCrate: around world
+    DescriptionCrate: 
+    bookProbabilities:
+    - bookId: travel
+      percentage: 40
+    - bookId: fact
+      percentage: 20
+    - bookId: drama
+      percentage: 20
+    - bookId: classic
+      percentage: 10
+  - price: 40
+    NameCrate: meme
+    DescriptionCrate: 
+    bookProbabilities:
+    - bookId: kid
+      percentage: 20
+    - bookId: fantasy
+      percentage: 20
+    - bookId: fact
+      percentage: 20
+    - bookId: drama
+      percentage: 20
+  - price: 20
+    NameCrate: history I
+    DescriptionCrate: 
+    bookProbabilities:
+    - bookId: travel
+      percentage: 20
+    - bookId: classic
+      percentage: 50
+    - bookId: fact
+      percentage: 10
+  - price: 40
+    NameCrate: mystery I
+    DescriptionCrate: 
+    bookProbabilities:
+    - bookId: crime
+      percentage: 40
+    - bookId: fact
+      percentage: 20
+    - bookId: travel
+      percentage: 5
+    - bookId: drama
+      percentage: 20
+    - bookId: classic
+      percentage: 5
