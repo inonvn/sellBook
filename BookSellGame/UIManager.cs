@@ -3,19 +3,20 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using BookSellGame.Core;
 
 
 [System.Serializable]
 public class SachwithUI
 {
-    public string Name;
+    public typeBook Name;
     public Sprite sprite;
 }
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
     public List<shopManager> CrateUI;
-    public CanvasGroup MainGame;
+    public CanvasGroup ShopMGame;
     public CanvasGroup MainMenu;
     public CanvasGroup Setting;
     public GameObject SettingUI;
@@ -33,22 +34,30 @@ public class UIManager : MonoBehaviour
     public GameObject ShowSachAfterBuyCha;
     public List<RectTransform> Vitrifake;
     public List<SachwithUI> SachIconA;
+    public CanvasGroup GameSapBook;
+    public GameObject Giasach;
+    public GameObject Map;
+    public CanvasGroup UIChonSach;
+    public CanvasGroup UISoluongSach;
+
     public void Awake()
     {
         Instance = this;
         // Subscribe to wallet updates so CoinText stays in sync
-        GameManager.OnWalletChanged += UpdateCoinDisplay;
+        EventBus.OnWalletChanged += UpdateCoinDisplay;
     }
     void Start()
     {
         CoinAndSetting.SetActive(true);
         MainMenu.gameObject.SetActive(true) ;
         GameManager.OnStorageChanged += showSachAfter;
+        GameManager.onChangeStat += GotoXapXepbook;
     }
     private void OnDisable()
     {
         GameManager.OnStorageChanged -= showSachAfter;
-        GameManager.OnWalletChanged -= UpdateCoinDisplay;
+        EventBus.OnWalletChanged -= UpdateCoinDisplay;
+        GameManager.onChangeStat -= GotoXapXepbook;
     }
     public void showSachAfter()
     {
@@ -65,33 +74,57 @@ public class UIManager : MonoBehaviour
         ShowSachAfterBuy.gameObject.SetActive(false);
 
     }
+    public void onCompleteToGo()
+    {
+        Map.SetActive(true);
+        UISoluongSach.gameObject.SetActive(true);
+        RandomInon.FadeOut(UISoluongSach);
+        GameSapBook.gameObject.SetActive(false);
+        Giasach.SetActive(false);
+    }    
+    public void chooseBook ()
+    { }
     private void UpdateCoinDisplay(int newAmount)
     {
         if (CoinText != null) CoinText.text = newAmount.ToString();
     }
     private void PopulateBookUI()
     {
-        // Clear existing items in container
+        
         foreach (Transform child in ShowSachAfterBuyCha.transform)
         {
             if (child.gameObject != null) Destroy(child.gameObject);
         }
-        // Populate based on GameManager storage, positioning each entry using Vitrifake placeholders
+       
         var bookList = GameManager.ins.GetOwnedBooks().ToList();
         for (int i = 0; i < bookList.Count && i < Vitrifake.Count; i++)
         {
             var bookData = bookList[i];
-            var obj = Instantiate(GameManager.ins.SLbook, ShowSachAfterBuyCha.transform);
+            
+            var placeholder = Vitrifake[i];
+            var obj = Instantiate(SLbookPrefab, ShowSachAfterBuyCha.transform);
             var slBook = obj.GetComponent<SLbook>();
             if (slBook != null) slBook.Setup(bookData);
-            // Set position using corresponding RectTransform placeholder
+            
             var rt = obj.GetComponent<RectTransform>();
-            if (rt != null && Vitrifake[i] != null)
+            if (rt != null && placeholder != null)
             {
-                rt.anchoredPosition = Vitrifake[i].anchoredPosition;
+                rt.SetParent(ShowSachAfterBuyCha.transform);
+                rt.anchoredPosition = placeholder.anchoredPosition;
+                rt.position = placeholder.position;
+                rt.pivot = placeholder.pivot;
             }
         }
     }
+    public void GotoXapXepbook()
+    {
+      Sapxep(false);
+    } 
+    public void XapXepToShop()
+    {
+        Sapxep(true);
+    }    
+    
     public void StartGame()
     {
         GameST(true);
@@ -99,14 +132,30 @@ public class UIManager : MonoBehaviour
     public void GameBack()
     {
         GameST(false);
+    }
+    private void Sapxep(bool S)
+    {
+        if (S == true)
+        {
+            ShopMGame.gameObject.SetActive(S);
+            RandomInon.FadeOut(ShopMGame);
+        }
+        else
+        {
+            RandomInon.FadeIn(ShopMGame);
+            ShopMGame.gameObject.SetActive(S);
+        }
+        Giasach.SetActive(!S);
+        GameSapBook.gameObject.SetActive(!S);
+        RandomInon.FadeOut(GameSapBook);
     }    
     public void GameST(bool S)
     {
         MainMenu.gameObject.SetActive(!S);
-        MainGame.gameObject.SetActive(S);
-     if (S==true) {  RandomInon.FadeOut(MainGame); CoinUI.SetActive(true);}
+        ShopMGame.gameObject.SetActive(S);
+     if (S==true) {  RandomInon.FadeOut(ShopMGame); CoinUI.SetActive(S);}
      else 
-        { RandomInon.FadeOut(MainMenu); CoinUI.SetActive(false); } 
+        { RandomInon.FadeOut(MainMenu); CoinUI.SetActive(S); } 
     }
     bool shopOn = true;
     public void GameShop()

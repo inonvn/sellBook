@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BookSellGame.Core;
 
 [System.Serializable]
 public class CratePriceConfig
@@ -10,18 +11,45 @@ public class CratePriceConfig
     public string DescriptionCrate;
     public List<BookProbability> bookProbabilities;
 }
+[System.Serializable]
+public enum typeBook
+{
+    crime,
+    fantasy,
+    drama,
+  kid,
+  classic,
+  travel,
+  fact,
+
+}
+public enum sizeBook
+{
+    size1,
+    size2,
+    size3,
+}
+public enum khuVuc
+{
+    khu1,
+    khu2,
+    khu3,
+    khu4,
+    khu5,
+
+}
 
 [System.Serializable]
 public class BookProbability
 {
-    public string bookId;
+    public typeBook type;
     public float percentage; // 0-100, sum should be 100
 }
 
 [System.Serializable]
 public class StorageData
 {
-    public Dictionary<string, int> bookCounts = new Dictionary<string, int>();
+    public Dictionary<typeBook, int> bookCounts = new Dictionary<typeBook, int>();
     public int maxCapacity = 88;
     public int CurrentCount
     {
@@ -33,7 +61,7 @@ public class StorageData
         }
     }
     public bool CanAdd(int amount) => CurrentCount + amount <= maxCapacity;
-    public void Add(string bookId, int amount)
+    public void Add(typeBook bookId, int amount)
     {
         if (!bookCounts.ContainsKey(bookId)) bookCounts[bookId] = 0;
         bookCounts[bookId] += amount;
@@ -46,12 +74,17 @@ public class GameManager : MonoBehaviour
     public int PlayerWallet;
     public GameStartSetting GameStartSetting;
     public SLbook SLbook;
+public RegionConfig CurrentRegionConfig;
+public static event System.Action<RegionConfig> OnRegionChanged;
+    
     // Crate configurations now come from GameStartSetting ScriptableObject
     public List<CratePriceConfig> crateConfigs;
 
     public StorageData Storage = new StorageData();
 
-    // Events for UI updates
+    public delegate void OnChangeState();
+    public static event OnChangeState onChangeStat;
+
     public delegate void StorageChanged();
     public static event StorageChanged OnStorageChanged;
     public delegate void WalletChanged(int newAmount);
@@ -61,15 +94,79 @@ public class GameManager : MonoBehaviour
     public static void NotifyStorageChanged()
     {
         OnStorageChanged?.Invoke();
+        EventBus.RaiseStorageChanged();
+    }
+
+    // Public method to raise region change event from other classes
+    public static void NotifyRegionChanged(RegionConfig newRegion)
+    {
+        OnRegionChanged?.Invoke(newRegion);
+    }/// Returns true if successful, false if insufficient funds.
+    /// </summary>
+    public bool TrySpendTravelFee(int fee)
+    {
+        if (fee <= 0) return true; // no cost
+        if (PlayerWallet < fee)
+        {
+            Debug.LogWarning($"Insufficient funds for travel fee {fee}. Current wallet: {PlayerWallet}");
+            return false;
+        }
+        PlayerWallet -= fee;
+        OnWalletChanged?.Invoke(PlayerWallet);
+        return true;
     }
 
     void Awake()
     {
         if (ins == null) ins = this;
         else Destroy(gameObject);
-        
     }
+    public void traveler(int i)
+    {
+        
+        switch (i)
+        {
+            case (int)khuVuc.khu1:
+                {
+                    PlayerWallet -= 20;
+                    OnWalletChanged?.Invoke(PlayerWallet);
+                    onChangeStat?.Invoke();
+                    break;
+                }
+            case (int)khuVuc.khu2:
+                {
+                    PlayerWallet -= 40;
+                    OnWalletChanged?.Invoke(PlayerWallet);
+                    onChangeStat?.Invoke();
+                    break;
 
+                }
+            case (int)khuVuc.khu3:
+                {
+
+                    PlayerWallet -= 50;
+                    OnWalletChanged?.Invoke(PlayerWallet);
+                    onChangeStat?.Invoke();
+                    break;
+                }
+            case (int)khuVuc.khu4:
+                {
+                    PlayerWallet -= 50;
+                    OnWalletChanged?.Invoke(PlayerWallet);
+                    onChangeStat?.Invoke();
+                    break;
+
+                }
+            case (int)khuVuc.khu5:
+                {
+                    PlayerWallet -= 80;
+                    OnWalletChanged?.Invoke(PlayerWallet);
+                    onChangeStat?.Invoke();
+                    break;
+                }
+           
+        }
+    }    
     void Start()
     {
        
@@ -112,16 +209,17 @@ public class GameManager : MonoBehaviour
 
         // Deduct money
         PlayerWallet -= cfg.price;
-        OnWalletChanged?.Invoke(PlayerWallet);
+       
+            EventBus.RaiseWalletChanged(PlayerWallet);
 
         // Determine which books to grant based on percentages
-        List<string> granted = new List<string>();
+        List<typeBook> granted = new List<typeBook>();
         foreach (var prob in cfg.bookProbabilities)
         {
             // Simple chance roll per probability entry
             if (Random.value * 100f <= prob.percentage)
             {
-                granted.Add(prob.bookId);
+                granted.Add(prob.type);
             }
         }
 
@@ -138,13 +236,14 @@ public class GameManager : MonoBehaviour
                 break;
             }
         }
-
+        OnWalletChanged?.Invoke(PlayerWallet);
         OnStorageChanged?.Invoke();
+            EventBus.RaiseStorageChanged();
         Debug.Log($"Crate purchased. Wallet: {PlayerWallet}. Storage count: {Storage.CurrentCount}/{Storage.maxCapacity}");
         return true;
     }
     // Returns owned books as a collection of id/count pairs
-    public IEnumerable<KeyValuePair<string, int>> GetOwnedBooks()
+    public IEnumerable<KeyValuePair<typeBook, int>> GetOwnedBooks()
     {
         return Storage.bookCounts;
     }

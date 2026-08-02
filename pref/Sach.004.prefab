@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 3760457426362930234}
   - component: {fileID: 2578973641287832012}
   - component: {fileID: 1188307356183372613}
-  m_Layer: 0
+  - component: {fileID: -6808599662958482276}
+  m_Layer: 6
   m_Name: Sach.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,3 +91,17 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-6808599662958482276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7406149640487316524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e9d364c784f9a48b880bfedde15062, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BookComponent
+  type: 0
+  size: 0

@@ -1,37 +1,38 @@
 using UnityEngine;
 
 // This script handles the visual ghost preview of a book during drag operations.
-// It expects a reference to the real book prefab so that the ghost can copy its mesh.
 public class GhostBook : MonoBehaviour
 {
-    // Transparent material to apply to the ghost mesh (assign in inspector)
-    public Material ghostMaterial;
+    public bool itCanShow = true;
 
-    // Called by GrapControl to set which book to preview.
-    public void SetPreview(GameObject realBookPrefab)
+    private Renderer rend;
+    private SpriteRenderer spriteRend;
+
+    private void Awake()
     {
-        // Destroy any existing child mesh
-        foreach (Transform child in transform)
-        {
-            GameObject.Destroy(child.gameObject);
-        }
+        CacheRenderers();
+    }
 
-        // Instantiate the visual mesh as a child (without colliders or scripts)
-        GameObject preview = Instantiate(realBookPrefab, transform);
-        // Remove any unnecessary components from the preview instance
-        foreach (var comp in preview.GetComponentsInChildren<MonoBehaviour>())
-        {
-            // Keep Transform and Renderer, destroy others
-            if (!(comp is Transform) && !(comp is Renderer))
-            {
-                GameObject.Destroy(comp);
-            }
-        }
+    private void Start()
+    {
+        // Ensure GameObject (and Collider) is ACTIVE for Raycast to hit it,
+        // but hide the visual representation until hovered during drag.
+        gameObject.SetActive(true);
+        SetVisualActive(false);
+    }
 
-        // Apply ghost material to all renderers
-        foreach (Renderer rend in preview.GetComponentsInChildren<Renderer>())
-        {
-            rend.material = ghostMaterial;
-        }
+    private void CacheRenderers()
+    {
+        if (rend == null) rend = GetComponent<Renderer>() ?? GetComponentInChildren<Renderer>(true);
+        if (spriteRend == null) spriteRend = GetComponent<SpriteRenderer>() ?? GetComponentInChildren<SpriteRenderer>(true);
+    }
+
+    // Enables/disables only the visual renderer so Colliders remain active for Raycasts.
+    public void SetVisualActive(bool visible)
+    {
+        CacheRenderers();
+        if (rend != null) rend.enabled = visible;
+        if (spriteRend != null) spriteRend.enabled = visible;
     }
 }
+

@@ -15,62 +15,74 @@ MonoBehaviour:
   moneyStart: 100
   crateConfigs:
   - price: 30
-    NameCrate: comic
-    DescriptionCrate: 
-    bookProbabilities:
-    - bookId: drama
-      percentage: 10
-    - bookId: crime
-      percentage: 10
-    - bookId: kid
-      percentage: 40
-    - bookId: fantasy
-      percentage: 40
-  - price: 30
     NameCrate: around world
     DescriptionCrate: 
     bookProbabilities:
-    - bookId: travel
-      percentage: 40
-    - bookId: fact
+    - type: 5
+      percentage: 90
+    - type: 4
       percentage: 20
-    - bookId: drama
+    - type: 5
       percentage: 20
-    - bookId: classic
+    - type: 2
+      percentage: 20
+    - type: 4
+      percentage: 20
+    - type: 4
+      percentage: 30
+  - price: 30
+    NameCrate: comic
+    DescriptionCrate: 
+    bookProbabilities:
+    - type: 3
+      percentage: 90
+    - type: 1
       percentage: 10
+    - type: 3
+      percentage: 40
+    - type: 6
+      percentage: 40
+    - type: 3
+      percentage: 40
   - price: 40
     NameCrate: meme
     DescriptionCrate: 
     bookProbabilities:
-    - bookId: kid
+    - type: 2
+      percentage: 90
+    - type: 1
+      percentage: 30
+    - type: 6
       percentage: 20
-    - bookId: fantasy
+    - type: 6
       percentage: 20
-    - bookId: fact
-      percentage: 20
-    - bookId: drama
-      percentage: 20
+    - type: 0
+      percentage: 30
   - price: 20
     NameCrate: history I
     DescriptionCrate: 
     bookProbabilities:
-    - bookId: travel
-      percentage: 20
-    - bookId: classic
+    - type: 4
+      percentage: 100
+    - type: 4
       percentage: 50
-    - bookId: fact
+    - type: 2
       percentage: 10
+    - type: 6
+      percentage: 50
+    - type: 5
+      percentage: 50
   - price: 40
     NameCrate: mystery I
     DescriptionCrate: 
     bookProbabilities:
-    - bookId: crime
+    - type: 0
+      percentage: 100
+    - type: 0
       percentage: 40
-    - bookId: fact
+    - type: 2
       percentage: 20
-    - bookId: travel
-      percentage: 5
-    - bookId: drama
+    - type: 1
+      percentage: 30
+    - type: 0
       percentage: 20
-    - bookId: classic
-      percentage: 5
